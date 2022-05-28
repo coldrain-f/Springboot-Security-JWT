@@ -4,11 +4,13 @@ import com.coldrain.jwt.filter.JwtAuthenticationFilter;
 import com.coldrain.jwt.filter.MyFilter1;
 import com.coldrain.jwt.filter.MyFilter3;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
@@ -23,12 +25,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     // ===============================================================================================
 
+    // 스프링이 로그인 시도시 내부적으로 암호화 하여 DB 에서 조회하기 위해서 추가해주어야 한다.
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Override // JWT 사용시 기본 설정
     protected void configure(HttpSecurity http) throws Exception {
         // ===============================================================================================
         // 커스텀 필터는 addFilter() 로 걸면 안 되고 addFilterBefore()나 addFilterAfter()로 걸어야 한다.
         // 시큐리티 필터가 실행되기 전에 커스텀 필터가 실행되도록 걸어주어야 한다.
-        http.addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
+        //http.addFilterBefore(new MyFilter3(), SecurityContextPersistenceFilter.class);
         // ===============================================================================================
 
         http.csrf().disable(); // ?
