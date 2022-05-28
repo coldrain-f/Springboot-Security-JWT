@@ -1,5 +1,7 @@
 package com.coldrain.jwt.filter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.coldrain.jwt.auth.PrincipalDetails;
 import com.coldrain.jwt.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 // POST 방식으로 /login 을 username 과 password 를 가지고 요청하면
 // UsernamePasswordAuthenticationFilter 가 동작한다.
@@ -81,6 +84,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("successfulAuthentication: 인증이 완료되었음");
-        super.successfulAuthentication(request, response, chain, authResult);
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+        // java JWT 라이브러리 사용
+        String jwtToken = JWT.create()
+                // 토큰 이름
+                .withSubject(principalDetails.getUsername())
+                // 토큰 만료 시간 ( 현재 시간 + 지정 시간 )
+                // 밀리 세컨드는 1000이 1초이다. (60000 * 10) = 10분
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
+                // 토큰에 담고싶은 데이터
+                .withClaim("id", principalDetails.getUser().getId())
+                .withClaim("username", principalDetails.getUser().getUsername())
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+
+        // 응답 헤더에 담긴다.
+        response.addHeader("Authorization", "Bearer " + jwtToken);
+        // 서버가 JWT 토큰이 유효한지 판단하기 위한 Filter 를 만들어야 한다.
+        // -> JwtAuthorizationFilter 확인
     }
 }

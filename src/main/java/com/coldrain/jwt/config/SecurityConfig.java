@@ -1,8 +1,8 @@
 package com.coldrain.jwt.config;
 
 import com.coldrain.jwt.filter.JwtAuthenticationFilter;
-import com.coldrain.jwt.filter.MyFilter1;
-import com.coldrain.jwt.filter.MyFilter3;
+import com.coldrain.jwt.filter.JwtAuthorizationFilter;
+import com.coldrain.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -23,6 +21,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // ===============================================================================================
     // CorsConfig 에서 빈으로 등록해주었던 필터를 주입받는다.
     private final CorsFilter corsFilter;
+    // ===============================================================================================
+
+    // ===============================================================================================
+    // JwtAuthorizationFilter 에게 넘겨주기 위해서 주입받는다.
+    private final UserRepository userRepository;
     // ===============================================================================================
 
     // 스프링이 로그인 시도시 내부적으로 암호화 하여 DB 에서 조회하기 위해서 추가해주어야 한다.
@@ -71,6 +74,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // ( JwtAuthenticationFilter 확인 )
                 // WebSecurityConfigurerAdapter 가 authenticationManager 를 가지고 있어서 그냥 넘겨주면 된다.
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                // ===============================================================================================
+
+                // ===============================================================================================
+                // ( JwtAuthorizationFilter 확인 )
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
                 // ===============================================================================================
 
                 // ===============================================================================================

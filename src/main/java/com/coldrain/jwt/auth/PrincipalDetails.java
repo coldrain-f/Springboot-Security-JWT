@@ -18,6 +18,10 @@ public class PrincipalDetails implements UserDetails {
         this.user = user;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     @Override // 이게 정확히 뭔지 모르겠음 ( 부트 블로그 52강 8분 33초 )
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Role role = user.getRole();
