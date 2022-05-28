@@ -5,7 +5,6 @@ import com.coldrain.jwt.filter.MyFilter2;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableMBeanExport;
 
 @Configuration
 public class FilterConfig {

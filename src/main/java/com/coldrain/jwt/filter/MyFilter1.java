@@ -14,7 +14,7 @@ public class MyFilter1 implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("필터1");
+        //log.info("필터1");
         chain.doFilter(request, response);
     }
 }

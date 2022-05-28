@@ -34,7 +34,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String jwtHeader = request.getHeader("Authorization");
+        String jwtHeader = request.getHeader(JwtProperties.HEADER_STRING);
         log.info("jwtHeader = {}", jwtHeader);
 
         // JWT 토큰을 검증해서 정상적인 사용자 인지 확인한다.
@@ -47,8 +47,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // JWT 토큰을 검증해서 정상적인 사용자인지 확인한다.
         // [Bearer ]을 헤더에서 떼어낸다.
-        String jwtToken = request.getHeader("Authorization")
-                .replace("Bearer ", "");
+        String jwtToken = request.getHeader(JwtProperties.HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX ,"");
 
         // 시크릿키로 jwtToken 을 복호화하고 username 을 가지고 온다.
         String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))

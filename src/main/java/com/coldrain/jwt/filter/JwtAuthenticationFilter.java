@@ -98,7 +98,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
         // 응답 헤더에 담긴다.
-        response.addHeader("Authorization", "Bearer " + jwtToken);
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
         // 서버가 JWT 토큰이 유효한지 판단하기 위한 Filter 를 만들어야 한다.
         // -> JwtAuthorizationFilter 확인
     }
